@@ -2,8 +2,12 @@
 #include <windows.h> 
 #include <vector> 
 #include <cmath> 
+#include <dos.h>
+#include <stdio.h>
 
 using namespace std;
+
+SHORT console_top_offset = 2; //for SetPosition
 
 struct Point {
     int x;
@@ -14,8 +18,23 @@ struct Point {
     }
 };
 
+void ClearConsole() {
+    // CSI[2J clears screen, CSI[H moves the cursor to top-left corner
+    cout << "\x1B[2J\x1B[H";
+}
 
-void DrawPoint(int x, int y, char sym) {
+void SetPosition(SHORT x, SHORT y)
+{
+    y += console_top_offset;
+
+    HANDLE winHandle;
+    COORD pos = { x,y };
+    winHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleCursorPosition(winHandle, pos);
+}
+
+
+void DrawPointOld(int x, int y, char sym) {
     for ( int i = 1; i < y; i++ ) {
         cout << endl;
     }
@@ -23,6 +42,11 @@ void DrawPoint(int x, int y, char sym) {
         cout << ' ';
     }
     cout << sym << endl;
+}
+
+void DrawPoint(int x, int y, char sym) {
+    SetPosition(x, y);
+    cout << sym;
 }
 
 vector<vector<bool>> DrawLineToVector(vector<vector<bool>> mas, int x1, int y1, int x2, int y2, char sym) {
@@ -70,6 +94,8 @@ void DrawVector(vector<vector<bool>> mas, char sym) {
 }
 
 
+
+
 int main() {
     vector<vector<bool>> mas
     {
@@ -78,8 +104,15 @@ int main() {
         {0, 0, 0}
     };
 
-    mas = DrawLineToVector(mas, 1, 1, 3, 3, '1');
-    DrawVector(mas, '1');
+    // int k = 2;
+
+    // mas = DrawLineToVector(mas, 1, 1, 1, 2, '1');
+    // DrawVector(mas, '1');
+
+
+    DrawPoint(1, 1, '1');
+    DrawPoint(1, 5, '1');
+    //DrawPoint(1, 1, '\b');
 
     return 0;
 }
