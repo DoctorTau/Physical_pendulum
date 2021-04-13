@@ -77,10 +77,9 @@ int main() {
         {0, 0, 0},
         {0, 0, 0}
     };
-    // mas = DrawPointToVector(mas, 1, 2, '1');
-    mas = DrawLineToVector(mas, 1, 1, 2, 3, '1');
+
+    mas = DrawLineToVector(mas, 1, 1, 3, 3, '1');
     DrawVector(mas, '1');
-    //DrawPoint(1, 1, '@');
-    //DrawLine(1, 1, 2, 6, '1');
+
     return 0;
 }
