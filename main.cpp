@@ -84,35 +84,23 @@ vector<vector<bool>> DrawLineToVector(vector<vector<bool>> mas, int x1, int y1, 
 }
 
 void DrawVector(vector<vector<bool>> mas, char sym) {
-    for ( auto boka : mas ) {
-        for ( auto joka : boka ) {
-            if ( joka ) cout << sym;
-            else cout << ' ';
-        }
-        cout << endl;
-    }
+
 }
 
-
-
+//DrawPoint(1, 1, '\b'); TO DELETE A CHARACTER IN CONSOLE
 
 int main() {
     vector<vector<bool>> mas
     {
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0}
+        {0, 1, 0},
+        {0, 1, 0},
+        {0, 1, 0}
     };
 
-    // int k = 2;
 
-    // mas = DrawLineToVector(mas, 1, 1, 1, 2, '1');
-    // DrawVector(mas, '1');
+    DrawVector(mas, '1');
 
-
-    DrawPoint(1, 1, '1');
-    DrawPoint(1, 5, '1');
-    //DrawPoint(1, 1, '\b');
+    //DrawPoint(1, 1, '1');
 
     return 0;
 }
