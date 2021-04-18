@@ -10,7 +10,7 @@
 using namespace std;
 
 SHORT console_top_offset = 0; //for SetPosition
-int vec_size = 60;
+int vec_size = 200;
 vector<vector<bool>> screen_vector(vec_size, vector<bool>(vec_size));
 vector<vector<bool>> screen_vector_old = screen_vector;
 
@@ -181,10 +181,12 @@ public:
         this->top1.y = y_top1;
         this->angle1 = angle1;
         this->angle2 = angle2;
-        this->top2.x = L1 * sin(angle1);
-        this->top2.y = -L1 * cos(angle1);
-        this->body.x = top2.x + L2 * sin(angle2);
-        this->body.y = top2.y - L2 * cos(angle2);
+        this->L1 = r1;
+        this->L2 = r2;
+        this->top2.x = x_top1 + floor(L1 * sin(angle1));
+        this->top2.y = y_top1 + floor((-L1 * cos(angle1)));
+        this->body.x = top2.x + floor(L2 * sin(angle2));
+        this->body.y = top2.y - floor(L2 * cos(angle2));
 
         this->m1 = m1;
         this->m2 = m2;
@@ -209,14 +211,24 @@ public:
         this->w2 += this->a2;
         this->angle1 += this->w1;
         this->angle2 += this->w2;
-        this->top2.x = L1 * sin(angle1);
-        this->top2.y = -L1 * cos(angle1);
-        this->body.x = top2.x + L2 * sin(angle2);
-        this->body.y = top2.y - L2 * cos(angle2);
+        this->top2.x = top1.x + floor(L1 * sin(angle1));
+        this->top2.y = top1.y + floor(-L1 * cos(angle1));
+        this->body.x = top2.x + floor(L2 * sin(angle2));
+        this->body.y = top2.y - floor(L2 * cos(angle2));
 
     }
 
-    void draw() {
+    void Draw() {
+        cout << 1 << ' ' << top1.x << ' ' << top1.y << endl;
+        cout << 2 << ' ' << top2.x << ' ' << top2.y << endl;
+        cout << 3 << ' ' << body.x << ' ' << body.y << endl;
+        screen_vector_old = screen_vector;
+        ClearVector();
+        DrawLineToVector(this->top1.x, this->top1.y, this->top2.x, this->top2.y);
+        DrawLineToVector(this->top2.x, this->top2.y, this->body.x, this->body.y);
+        DrawVector(screen_vector, '1');
+        DrawPoint(this->body.x, this->body.y, '@');
+        DrawPoint(this->top2.x, this->top2.y, '@');
 
     }
 };
@@ -224,26 +236,28 @@ public:
 
 int main() {
 
-    int x = 25;
-    int y = 1;
-    int r = 15;
+    int x = 40;
+    int y = 20;
+    int r = 10;
     double T = 4;
     double start_angle = 5 * M_PI / 11;
     double mas = 1;
     double g = 9.8;
-    int fps = 60;
+    int fps = 24;
 
     clock_t before = clock();
     clock_t internal_time_ms = clock() - before;
 
-    Pendulum pend(x, y, r, T, start_angle, mas);
+    //Pendulum pend(x, y, r, T, start_angle, mas);
+    Double_pendulum pend(x, y, r, r, 100, 100, start_angle, start_angle);
 
     while (true) {
         internal_time_ms = (clock() - before);
         double internal_time = (float)(internal_time_ms) / 1000;
-        pend.Process(internal_time);
+        pend.Process();
         pend.Draw();
         Sleep(1000 / fps);
+        ClearConsole();
     }
 
     return 0;
