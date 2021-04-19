@@ -184,9 +184,9 @@ public:
         this->L1 = r1;
         this->L2 = r2;
         this->top2.x = x_top1 + floor(L1 * sin(angle1));
-        this->top2.y = y_top1 + floor((-L1 * cos(angle1)));
+        this->top2.y = y_top1 + floor((L1 * cos(angle1)));
         this->body.x = top2.x + floor(L2 * sin(angle2));
-        this->body.y = top2.y - floor(L2 * cos(angle2));
+        this->body.y = top2.y + floor(L2 * cos(angle2));
 
         this->m1 = m1;
         this->m2 = m2;
@@ -199,13 +199,13 @@ public:
     void Process() {
         double g = 9.81;
 
-        this->a1 = -(g * (2 * m1 - m2) * sin(this->angle1) - m2 * g * sin(angle1 - 2 * angle2) - 2 *
-            sin(angle1 - angle2) * m2 * (pow(a2, 2) * L2 + pow(a1, 2) * L1 * cos(angle1 - angle2))) /
-            (L1 * (2 * m1 + m2 - m2 * cos(2 * (angle1 - angle2))));
+        this->a1 = (-g * (2 * m1 - m2) * sin(angle1) - m2 * g * sin(angle1 - 2 * angle2) - 2 *
+            sin(angle1 - angle2) * m2 * (pow(w2, 2) * L2 + pow(w1, 2) * L1 * cos(angle1 - angle2))) /
+            (L1 * (2 * m1 + m2 - m2 * cos(2 * angle1 - 2 * angle2)));
 
-        this->a2 = (2 * sin(angle1 - angle2) * (pow(a1, 2) * L1 * (m1 + m2) + g * (m1 + m2) *
-            cos(angle1) + pow(a2, 2) * L2 * m2 * cos(angle1 - angle2))) /
-            (L2 * (2 * m1 + m2 - m2 * cos(2 * (angle1 - angle2))));
+        this->a2 = (2 * sin(angle1 - angle2) * (pow(w1, 2) * L1 * (m1 + m2) + g * (m1 + m2) *
+            cos(angle1) + pow(w2, 2) * L2 * m2 * cos(angle1 - angle2))) /
+            (L2 * (2 * m1 + m2 - m2 * cos(2 * angle1 - 2 * angle2)));
 
         this->w1 += this->a1;
         this->w2 += this->a2;
@@ -222,6 +222,10 @@ public:
         cout << 1 << ' ' << top1.x << ' ' << top1.y << endl;
         cout << 2 << ' ' << top2.x << ' ' << top2.y << endl;
         cout << 3 << ' ' << body.x << ' ' << body.y << endl;
+        cout << "a1" << ' ' << a1 << endl;
+        cout << "a2" << ' ' << a2 << endl;
+        cout << "angle 1" << ' ' << angle1 << endl;
+        cout << "angle 2" << ' ' << angle2 << endl;
         screen_vector_old = screen_vector;
         ClearVector();
         DrawLineToVector(this->top1.x, this->top1.y, this->top2.x, this->top2.y);
@@ -241,15 +245,16 @@ int main() {
     int r = 10;
     double T = 4;
     double start_angle = 5 * M_PI / 11;
+    double start_angle_2 = 4 * M_PI / 11;
     double mas = 1;
     double g = 9.8;
-    int fps = 24;
+    int fps = 60;
 
     clock_t before = clock();
     clock_t internal_time_ms = clock() - before;
 
     //Pendulum pend(x, y, r, T, start_angle, mas);
-    Double_pendulum pend(x, y, r, r, 100, 100, start_angle, start_angle);
+    Double_pendulum pend(x, y, r, r, 1000, 1000, start_angle, start_angle_2);
 
     while (true) {
         internal_time_ms = (clock() - before);
