@@ -266,7 +266,7 @@ int main() {
 
     //Pendulum pend(x, y, r, T, start_angle, mas);
 
-    Double_pendulum pend(x, y, r, r, 1, 1, M_PI, M_PI / 4);
+    Double_pendulum pend(x, y, r, r, 1, 1, 5 * M_PI / 6, M_PI / 4);
     int k = 0;
     ClearConsole();
     while ( true ) {
