@@ -30,13 +30,13 @@ void DrawPoint(int x, int y, char sym) {
 }
 
 void DrawVector(vector<vector<bool>>& vnuk, char sym) {
-    for (int boka = 0; boka < vnuk.size(); boka++) {
-        for (int joka = 0; joka < vnuk[boka].size(); joka++) {
-            if (vnuk[boka][joka]) {
+    for ( int boka = 0; boka < vnuk.size(); boka++ ) {
+        for ( int joka = 0; joka < vnuk[boka].size(); joka++ ) {
+            if ( vnuk[boka][joka] ) {
                 DrawPoint(joka, boka, sym);
             }
             else {
-                if (screen_vector_old[boka][joka]) {
+                if ( screen_vector_old[boka][joka] ) {
                     DrawPoint(joka, boka, ' ');
                 }
             }
@@ -45,8 +45,8 @@ void DrawVector(vector<vector<bool>>& vnuk, char sym) {
 }
 
 void DrawVectorIron() {
-    for (auto boka : screen_vector) {
-        for (auto joka : boka) {
+    for ( auto boka : screen_vector ) {
+        for ( auto joka : boka ) {
             cout << joka << ' ';
         }
         cout << endl;
@@ -71,7 +71,7 @@ void DrawLineToVector(int x1, int y1, int x2, int y2) {
     Point p1; Point p2; Point p_tmp;
     p1.x = x1; p1.y = y1;
     p2.x = x2; p2.y = y2;
-    if (p1.x > p2.x) {
+    if ( p1.x > p2.x ) {
         p_tmp = p2;
         p2 = p1;
         p1 = p_tmp;
@@ -86,16 +86,16 @@ void DrawLineToVector(int x1, int y1, int x2, int y2) {
     const int signY = y1 < y2 ? 1 : -1;
     int error = deltaX - deltaY;
     screen_vector[y2][x2] = 1;
-    while (x1 != x2 || y1 != y2)
+    while ( x1 != x2 || y1 != y2 )
     {
         screen_vector[y1][x1] = 1;
         int error2 = error * 2;
-        if (error2 > -deltaY)
+        if ( error2 > -deltaY )
         {
             error -= deltaY;
             x1 += signX;
         }
-        if (error2 < deltaX)
+        if ( error2 < deltaX )
         {
             error += deltaX;
             y1 += signY;
@@ -105,8 +105,8 @@ void DrawLineToVector(int x1, int y1, int x2, int y2) {
 }
 
 void ClearVector() {
-    for (int boka = 0; boka < screen_vector.size(); boka++) {
-        for (int joka = 0; joka < screen_vector[boka].size(); joka++) {
+    for ( int boka = 0; boka < screen_vector.size(); boka++ ) {
+        for ( int joka = 0; joka < screen_vector[boka].size(); joka++ ) {
             screen_vector[boka][joka] = 0;
         }
     }
@@ -159,7 +159,6 @@ public:
 
 };
 
-
 class Double_pendulum {
     Point top1;
     Point top2;
@@ -184,9 +183,9 @@ public:
         this->L1 = r1;
         this->L2 = r2;
         this->top2.x = x_top1 + floor(L1 * sin(angle1));
-        this->top2.y = y_top1 + floor((-L1 * cos(angle1)));
+        this->top2.y = y_top1 + floor(L1 * cos(angle1));
         this->body.x = top2.x + floor(L2 * sin(angle2));
-        this->body.y = top2.y - floor(L2 * cos(angle2));
+        this->body.y = top2.y + floor(L2 * cos(angle2));
 
         this->m1 = m1;
         this->m2 = m2;
@@ -197,31 +196,50 @@ public:
     }
 
     void Process() {
-        double g = 9.81;
+        double g = 0.0000005;
 
-        this->a1 = -(g * (2 * m1 - m2) * sin(this->angle1) - m2 * g * sin(angle1 - 2 * angle2) - 2 *
-            sin(angle1 - angle2) * m2 * (pow(a2, 2) * L2 + pow(a1, 2) * L1 * cos(angle1 - angle2))) /
-            (L1 * (2 * m1 + m2 - m2 * cos(2 * (angle1 - angle2))));
+        // this->a1 = -( g * ( 2 * m1 - m2 ) * sin(this->angle1) - m2 * g * sin(angle1 - 2 * angle2) - 2 *
+        //     sin(angle1 - angle2) * m2 * ( pow(a2, 2) * L2 + pow(a1, 2) * L1 * cos(angle1 - angle2) ) ) /
+        //     ( L1 * ( 2 * m1 + m2 - m2 * cos(2 * ( angle1 - angle2 )) ) );
 
-        this->a2 = (2 * sin(angle1 - angle2) * (pow(a1, 2) * L1 * (m1 + m2) + g * (m1 + m2) *
-            cos(angle1) + pow(a2, 2) * L2 * m2 * cos(angle1 - angle2))) /
-            (L2 * (2 * m1 + m2 - m2 * cos(2 * (angle1 - angle2))));
+        // this->a2 = ( 2 * sin(angle1 - angle2) * ( pow(a1, 2) * L1 * ( m1 + m2 ) + g * ( m1 + m2 ) *
+        //     cos(angle1) + pow(a2, 2) * L2 * m2 * cos(angle1 - angle2) ) ) /
+        //     ( L2 * ( 2 * m1 + m2 - m2 * cos(2 * ( angle1 - angle2 )) ) );
+
+        double num1 = g * ( 2 * m1 + m2 ) * sin(angle1);
+        double num2 = m2 * g * sin(angle1 - 2 * angle2);
+        double num3 = 2 * sin(angle1 - angle2) * m2 * ( pow(w2, 2) * L2 + pow(w1, 2) * L1 * cos(angle1 - angle2) );
+        double numerator1 = -num1 - num2 - num3;
+        double denominator1 = L1 * ( 2 * m1 + m2 - m2 * cos(2 * angle1 - 2 * angle2) );
+        this->a1 = numerator1 / denominator1;
+
+
+        double num6 = pow(w1, 2) * L1 * ( m1 + m2 );
+        double num7 = g * ( m1 + m2 ) * cos(angle1);
+        double num8 = pow(w2, 2) * L2 * m2 * cos(angle1 - angle2);
+        double num5 = num6 + num7 + num8;
+        double numerator2 = 2 * sin(angle1 - angle2) * num5;
+        double denominator2 = L2 * ( 2 * m1 + m2 - m2 * cos(2 * angle1 - 2 * angle2) );
+        this->a2 = numerator2 / denominator2;
 
         this->w1 += this->a1;
         this->w2 += this->a2;
+
         this->angle1 += this->w1;
         this->angle2 += this->w2;
+
         this->top2.x = top1.x + floor(L1 * sin(angle1));
-        this->top2.y = top1.y + floor(-L1 * cos(angle1));
+        this->top2.y = top1.y + floor(L1 * cos(angle1));
+
         this->body.x = top2.x + floor(L2 * sin(angle2));
-        this->body.y = top2.y - floor(L2 * cos(angle2));
+        this->body.y = top2.y + floor(L2 * cos(angle2));
 
     }
 
     void Draw() {
-        cout << 1 << ' ' << top1.x << ' ' << top1.y << endl;
-        cout << 2 << ' ' << top2.x << ' ' << top2.y << endl;
-        cout << 3 << ' ' << body.x << ' ' << body.y << endl;
+        //cout << 1 << ' ' << top1.x << ' ' << top1.y << endl;
+        //cout << 2 << ' ' << top2.x << ' ' << top2.y << endl;
+        //cout << 3 << ' ' << body.x << ' ' << body.y << endl;
         screen_vector_old = screen_vector;
         ClearVector();
         DrawLineToVector(this->top1.x, this->top1.y, this->top2.x, this->top2.y);
@@ -233,31 +251,32 @@ public:
     }
 };
 
-
 int main() {
 
     int x = 40;
     int y = 20;
     int r = 10;
     double T = 4;
-    double start_angle = 5 * M_PI / 11;
+    double start_angle = M_PI / 4;
     double mas = 1;
-    double g = 9.8;
-    int fps = 24;
+    int fps = 10000;
 
     clock_t before = clock();
     clock_t internal_time_ms = clock() - before;
 
     //Pendulum pend(x, y, r, T, start_angle, mas);
-    Double_pendulum pend(x, y, r, r, 100, 100, start_angle, start_angle);
 
-    while (true) {
-        internal_time_ms = (clock() - before);
-        double internal_time = (float)(internal_time_ms) / 1000;
+    Double_pendulum pend(x, y, r, r, 1, 1, M_PI, M_PI / 4);
+    int k = 0;
+    ClearConsole();
+    while ( true ) {
+        internal_time_ms = ( clock() - before );
+        double internal_time = ( float )( internal_time_ms ) / 1000;
         pend.Process();
-        pend.Draw();
+        if ( k % 500 == 0 ) pend.Draw();
         Sleep(1000 / fps);
-        ClearConsole();
+        k += 1;
+        //ClearConsole();
     }
 
     return 0;
