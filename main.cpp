@@ -276,7 +276,6 @@ int main() {
         if ( k % 500 == 0 ) pend.Draw();
         Sleep(1000 / fps);
         k += 1;
-        //ClearConsole();
     }
 
     return 0;
